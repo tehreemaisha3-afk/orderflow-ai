@@ -60,6 +60,8 @@ function Dashboard() {
     confirmed: orders.filter((o) => o.status === "confirmed").length,
     delivered: orders.filter((o) => o.status === "delivered").length,
     unpaid: orders.filter((o) => o.payment_status === "unpaid").length,
+    cancelled: orders.filter((o) => o.status === "cancelled").length,
+
   };
 
   const stats = [
