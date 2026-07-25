@@ -22,6 +22,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { StatusBadge, PaymentBadge } from "@/components/status-badges";
+import { NewOrderDialog } from "@/components/new-order-dialog";
+
 import { format } from "date-fns";
 import { Eye, Search } from "lucide-react";
 
@@ -68,7 +70,18 @@ function OrdersPage() {
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Orders</h2>
+          <p className="text-sm text-muted-foreground">
+            {orders.length} order{orders.length === 1 ? "" : "s"} in your workspace
+          </p>
+        </div>
+        <NewOrderDialog />
+      </div>
+
       <Card className="shadow-card">
+
         <CardContent className="p-4">
           <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
             <div className="relative">
