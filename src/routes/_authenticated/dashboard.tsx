@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { StatusBadge, PaymentBadge } from "@/components/status-badges";
 import { format } from "date-fns";
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — OrderFlow AI" }] }),
