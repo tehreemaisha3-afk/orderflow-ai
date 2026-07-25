@@ -172,12 +172,13 @@ function OrderStatusSummary({
   total: number;
 }) {
   const items = [
-    { label: "New", value: counts.new, color: "hsl(var(--primary))" },
-    { label: "Awaiting info", value: counts.awaiting, color: "hsl(var(--warning))" },
-    { label: "Confirmed", value: counts.confirmed, color: "hsl(var(--accent-foreground))" },
-    { label: "Delivered", value: counts.delivered, color: "hsl(var(--success))" },
-    { label: "Cancelled", value: cancelled, color: "hsl(var(--muted-foreground))" },
+    { label: "New", value: counts.new, color: "var(--primary)" },
+    { label: "Awaiting info", value: counts.awaiting, color: "var(--warning)" },
+    { label: "Confirmed", value: counts.confirmed, color: "var(--accent-foreground)" },
+    { label: "Delivered", value: counts.delivered, color: "var(--success)" },
+    { label: "Cancelled", value: cancelled, color: "var(--muted-foreground)" },
   ];
+
 
   if (total === 0) {
     return (
