@@ -147,10 +147,10 @@ function Dashboard() {
 
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle className="text-base">Order status</CardTitle>
+            <CardTitle className="text-base">Order status summary</CardTitle>
           </CardHeader>
           <CardContent>
-            <StatusChartPlaceholder counts={counts} />
+            <OrderStatusSummary counts={counts} cancelled={cancelled} total={counts.total} />
           </CardContent>
         </Card>
       </div>
@@ -158,37 +158,76 @@ function Dashboard() {
   );
 }
 
-function StatusChartPlaceholder({
+function OrderStatusSummary({
   counts,
+  cancelled,
+  total,
 }: {
   counts: { new: number; awaiting: number; confirmed: number; delivered: number };
+  cancelled: number;
+  total: number;
 }) {
   const items = [
-    { label: "New", value: counts.new, color: "bg-primary" },
-    { label: "Awaiting", value: counts.awaiting, color: "bg-warning" },
-    { label: "Confirmed", value: counts.confirmed, color: "bg-accent-foreground" },
-    { label: "Delivered", value: counts.delivered, color: "bg-success" },
+    { label: "New", value: counts.new, color: "hsl(var(--primary))" },
+    { label: "Awaiting info", value: counts.awaiting, color: "hsl(var(--warning))" },
+    { label: "Confirmed", value: counts.confirmed, color: "hsl(var(--accent-foreground))" },
+    { label: "Delivered", value: counts.delivered, color: "hsl(var(--success))" },
+    { label: "Cancelled", value: cancelled, color: "hsl(var(--muted-foreground))" },
   ];
-  const max = Math.max(1, ...items.map((i) => i.value));
+
+  if (total === 0) {
+    return (
+      <p className="py-8 text-center text-sm text-muted-foreground">
+        No orders yet — create your first order from the Orders page.
+      </p>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      {items.map((i) => (
-        <div key={i.label}>
-          <div className="mb-1 flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">{i.label}</span>
-            <span className="font-medium">{i.value}</span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-muted">
-            <div
-              className={`h-full rounded-full ${i.color}`}
-              style={{ width: `${(i.value / max) * 100}%` }}
+      <div className="h-[180px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={items.filter((i) => i.value > 0)}
+              dataKey="value"
+              nameKey="label"
+              innerRadius={45}
+              outerRadius={75}
+              paddingAngle={2}
+            >
+              {items
+                .filter((i) => i.value > 0)
+                .map((i) => (
+                  <Cell key={i.label} fill={i.color} stroke="transparent" />
+                ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                background: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "0.5rem",
+                color: "hsl(var(--popover-foreground))",
+                fontSize: 12,
+              }}
             />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="space-y-2">
+        {items.map((i) => (
+          <div key={i.label} className="flex items-center justify-between text-xs">
+            <span className="flex items-center gap-2 text-muted-foreground">
+              <span className="h-2 w-2 rounded-full" style={{ background: i.color }} />
+              {i.label}
+            </span>
+            <span className="font-medium">
+              {i.value} · {Math.round((i.value / total) * 100)}%
+            </span>
           </div>
-        </div>
-      ))}
-      <p className="pt-2 text-xs text-muted-foreground">
-        Live chart coming soon.
-      </p>
+        ))}
+      </div>
     </div>
   );
 }
+
