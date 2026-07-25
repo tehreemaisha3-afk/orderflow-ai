@@ -154,7 +154,7 @@ function Dashboard() {
             <CardTitle className="text-base">Order status summary</CardTitle>
           </CardHeader>
           <CardContent>
-            <OrderStatusSummary counts={counts} cancelled={cancelled} total={counts.total} />
+            <OrderStatusSummary counts={counts} cancelled={counts.cancelled} total={counts.total} />
           </CardContent>
         </Card>
       </div>
