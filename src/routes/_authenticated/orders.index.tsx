@@ -22,6 +22,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { StatusBadge, PaymentBadge } from "@/components/status-badges";
+import { NewOrderDialog } from "@/components/new-order-dialog";
+
 import { format } from "date-fns";
 import { Eye, Search } from "lucide-react";
 
