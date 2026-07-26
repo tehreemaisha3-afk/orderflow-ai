@@ -77,6 +77,15 @@ function BusinessProfile() {
               owner_name: form.owner_name,
               whatsapp_number: form.whatsapp_number,
               business_address: form.business_address,
+              business_description: form.business_description,
+              contact_number: form.contact_number,
+              business_email: form.business_email,
+              business_hours: form.business_hours,
+              timezone: form.timezone,
+              currency: form.currency,
+              website: form.website,
+              logo_url: form.logo_url,
+
             }).eq("id", form.id);
             setLoading(false);
             if (error) return toast.error(error.message);
