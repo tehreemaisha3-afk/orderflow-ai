@@ -14,6 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_conversation_messages: {
+        Row: {
+          business_id: string
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          role: string
+        }
+        Insert: {
+          business_id: string
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          role: string
+        }
+        Update: {
+          business_id?: string
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversation_messages_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_conversation_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_conversations: {
+        Row: {
+          business_id: string
+          channel: string
+          created_at: string
+          customer_id: string | null
+          escalated: boolean
+          id: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          channel?: string
+          created_at?: string
+          customer_id?: string | null
+          escalated?: boolean
+          id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          channel?: string
+          created_at?: string
+          customer_id?: string | null
+          escalated?: boolean
+          id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversations_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_conversations_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_processing_logs: {
         Row: {
           business_id: string
@@ -56,38 +149,142 @@ export type Database = {
           },
         ]
       }
+      business_settings: {
+        Row: {
+          advance_payment_policy: string | null
+          ai_instructions: string | null
+          ai_tone: string
+          bank_account_number: string | null
+          bank_account_title: string | null
+          bank_name: string | null
+          business_id: string
+          canned_messages: Json
+          cod_policy: string | null
+          created_at: string
+          delivery_areas: string[]
+          delivery_charge: number
+          delivery_methods: string[]
+          delivery_time_rules: Json
+          escalation_rules: string | null
+          free_delivery_threshold: number | null
+          payment_instructions: string | null
+          payment_methods: string[]
+          return_policy: string | null
+          shipping_policy: string | null
+          updated_at: string
+        }
+        Insert: {
+          advance_payment_policy?: string | null
+          ai_instructions?: string | null
+          ai_tone?: string
+          bank_account_number?: string | null
+          bank_account_title?: string | null
+          bank_name?: string | null
+          business_id: string
+          canned_messages?: Json
+          cod_policy?: string | null
+          created_at?: string
+          delivery_areas?: string[]
+          delivery_charge?: number
+          delivery_methods?: string[]
+          delivery_time_rules?: Json
+          escalation_rules?: string | null
+          free_delivery_threshold?: number | null
+          payment_instructions?: string | null
+          payment_methods?: string[]
+          return_policy?: string | null
+          shipping_policy?: string | null
+          updated_at?: string
+        }
+        Update: {
+          advance_payment_policy?: string | null
+          ai_instructions?: string | null
+          ai_tone?: string
+          bank_account_number?: string | null
+          bank_account_title?: string | null
+          bank_name?: string | null
+          business_id?: string
+          canned_messages?: Json
+          cod_policy?: string | null
+          created_at?: string
+          delivery_areas?: string[]
+          delivery_charge?: number
+          delivery_methods?: string[]
+          delivery_time_rules?: Json
+          escalation_rules?: string | null
+          free_delivery_threshold?: number | null
+          payment_instructions?: string | null
+          payment_methods?: string[]
+          return_policy?: string | null
+          shipping_policy?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_settings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           business_address: string | null
+          business_description: string | null
+          business_email: string | null
+          business_hours: string | null
           business_name: string
           business_type: string | null
+          contact_number: string | null
           created_at: string
+          currency: string | null
           id: string
+          logo_url: string | null
           owner_id: string
           owner_name: string | null
+          timezone: string | null
           updated_at: string
+          website: string | null
           whatsapp_number: string | null
         }
         Insert: {
           business_address?: string | null
+          business_description?: string | null
+          business_email?: string | null
+          business_hours?: string | null
           business_name: string
           business_type?: string | null
+          contact_number?: string | null
           created_at?: string
+          currency?: string | null
           id?: string
+          logo_url?: string | null
           owner_id: string
           owner_name?: string | null
+          timezone?: string | null
           updated_at?: string
+          website?: string | null
           whatsapp_number?: string | null
         }
         Update: {
           business_address?: string | null
+          business_description?: string | null
+          business_email?: string | null
+          business_hours?: string | null
           business_name?: string
           business_type?: string | null
+          contact_number?: string | null
           created_at?: string
+          currency?: string | null
           id?: string
+          logo_url?: string | null
           owner_id?: string
           owner_name?: string | null
+          timezone?: string | null
           updated_at?: string
+          website?: string | null
           whatsapp_number?: string | null
         }
         Relationships: []
@@ -227,6 +424,101 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_aliases: {
+        Row: {
+          alias: string
+          business_id: string
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          alias: string
+          business_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          alias?: string
+          business_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_aliases_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_aliases_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          business_id: string
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          price: number
+          sku: string | null
+          stock: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          price?: number
+          sku?: string | null
+          stock?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          price?: number
+          sku?: string | null
+          stock?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
