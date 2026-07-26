@@ -11,6 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { LogOut } from "lucide-react";
+import {
+  AiSettings,
+  DeliverySettings,
+  PaymentSettings,
+  CustomerMessagesSettings,
+} from "@/components/settings/business-settings-forms";
+
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "Settings — OrderFlow AI" }] }),
