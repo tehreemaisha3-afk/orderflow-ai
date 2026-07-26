@@ -19,6 +19,8 @@ import {
   ShoppingBag,
   Users,
   MessageCircle,
+  Bot,
+  Package,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -33,6 +35,8 @@ const nav = [
   { title: "Orders", url: "/orders", icon: ShoppingBag },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Messages", url: "/messages", icon: MessageCircle },
+  { title: "Assistant", url: "/assistant", icon: Bot },
+  { title: "Products", url: "/products", icon: Package },
   { title: "Settings", url: "/settings", icon: Settings },
 ] as const;
 
