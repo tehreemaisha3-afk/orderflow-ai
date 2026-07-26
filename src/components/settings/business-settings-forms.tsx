@@ -185,7 +185,6 @@ export function DeliverySettings() {
   return (
     <SettingsForm
       form={form}
-      setForm={setForm}
       title="Delivery rules"
       description="The assistant will never promise anything outside these rules."
     >
@@ -240,7 +239,6 @@ export function PaymentSettings() {
   return (
     <SettingsForm
       form={form}
-      setForm={setForm}
       title="Payment rules"
       description="The assistant shares only the payment details you store here."
     >
@@ -275,7 +273,6 @@ export function AiSettings() {
   return (
     <SettingsForm
       form={form}
-      setForm={setForm}
       title="AI assistant"
       description="Shape how your assistant speaks and when it hands over to you."
     >
@@ -308,7 +305,6 @@ export function CustomerMessagesSettings() {
   return (
     <SettingsForm
       form={form}
-      setForm={setForm}
       title="Customer messages"
       description="Standard wording the assistant adapts naturally in conversations."
     >
