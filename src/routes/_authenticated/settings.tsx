@@ -97,9 +97,20 @@ function BusinessProfile() {
           <F label="Business type"><Input value={form.business_type ?? ""} onChange={(e) => setForm({ ...form, business_type: e.target.value })} /></F>
           <F label="Owner name"><Input value={form.owner_name ?? ""} onChange={(e) => setForm({ ...form, owner_name: e.target.value })} /></F>
           <F label="WhatsApp number"><Input value={form.whatsapp_number ?? ""} onChange={(e) => setForm({ ...form, whatsapp_number: e.target.value })} /></F>
+          <F label="Contact number"><Input value={form.contact_number ?? ""} onChange={(e) => setForm({ ...form, contact_number: e.target.value })} /></F>
+          <F label="Business email"><Input type="email" value={form.business_email ?? ""} onChange={(e) => setForm({ ...form, business_email: e.target.value })} /></F>
+          <F label="Business hours"><Input placeholder="Mon–Sat, 10am–8pm" value={form.business_hours ?? ""} onChange={(e) => setForm({ ...form, business_hours: e.target.value })} /></F>
+          <F label="Time zone"><Input placeholder="Asia/Karachi" value={form.timezone ?? ""} onChange={(e) => setForm({ ...form, timezone: e.target.value })} /></F>
+          <F label="Currency"><Input placeholder="PKR" value={form.currency ?? ""} onChange={(e) => setForm({ ...form, currency: e.target.value })} /></F>
+          <F label="Website (optional)"><Input value={form.website ?? ""} onChange={(e) => setForm({ ...form, website: e.target.value })} /></F>
+          <F label="Logo URL (optional)"><Input value={form.logo_url ?? ""} onChange={(e) => setForm({ ...form, logo_url: e.target.value })} /></F>
           <div className="sm:col-span-2">
             <F label="Business address"><Input value={form.business_address ?? ""} onChange={(e) => setForm({ ...form, business_address: e.target.value })} /></F>
           </div>
+          <div className="sm:col-span-2">
+            <F label="Business description"><Textarea rows={3} value={form.business_description ?? ""} onChange={(e) => setForm({ ...form, business_description: e.target.value })} /></F>
+          </div>
+
           <div className="sm:col-span-2">
             <Button type="submit" disabled={loading}>{loading ? "Saving…" : "Save changes"}</Button>
           </div>
