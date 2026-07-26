@@ -21,20 +21,27 @@ function SettingsPage() {
   return (
     <div className="mx-auto max-w-4xl">
       <Tabs defaultValue="profile">
-        <TabsList>
+        <TabsList className="flex w-full flex-wrap justify-start gap-1 h-auto">
           <TabsTrigger value="profile">Business profile</TabsTrigger>
           <TabsTrigger value="ai">AI settings</TabsTrigger>
+          <TabsTrigger value="delivery">Delivery</TabsTrigger>
+          <TabsTrigger value="payments">Payments</TabsTrigger>
+          <TabsTrigger value="messages">Customer messages</TabsTrigger>
           <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
           <TabsTrigger value="account">Account</TabsTrigger>
         </TabsList>
         <TabsContent value="profile" className="pt-6"><BusinessProfile /></TabsContent>
-        <TabsContent value="ai" className="pt-6"><PlaceholderCard title="AI settings" desc="Configure tone, follow-up templates and AI response rules. Coming soon." /></TabsContent>
+        <TabsContent value="ai" className="pt-6"><AiSettings /></TabsContent>
+        <TabsContent value="delivery" className="pt-6"><DeliverySettings /></TabsContent>
+        <TabsContent value="payments" className="pt-6"><PaymentSettings /></TabsContent>
+        <TabsContent value="messages" className="pt-6"><CustomerMessagesSettings /></TabsContent>
         <TabsContent value="whatsapp" className="pt-6"><PlaceholderCard title="WhatsApp integration" desc="Connect your WhatsApp Business account. Coming soon." /></TabsContent>
         <TabsContent value="account" className="pt-6"><AccountCard /></TabsContent>
       </Tabs>
     </div>
   );
 }
+
 
 function BusinessProfile() {
   const { data: business } = useBusiness();
