@@ -94,6 +94,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "OrderFlow AI — WhatsApp orders, organised" },
+      { name: "twitter:description", content: "OrderFlow AI helps small businesses manage WhatsApp orders, customers and follow-ups from one clean dashboard." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/35fb9417-9a98-4ab5-ad90-21df01b5c57c/id-preview-f54aadf8--fa7e9484-1707-470b-9b6c-27ac5177e100.lovable.app-1785175268816.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/35fb9417-9a98-4ab5-ad90-21df01b5c57c/id-preview-f54aadf8--fa7e9484-1707-470b-9b6c-27ac5177e100.lovable.app-1785175268816.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
