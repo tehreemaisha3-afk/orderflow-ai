@@ -242,7 +242,7 @@ export function NewOrderDialog() {
                 onChange={(e) => set("quantity", e.target.value as any)}
               />
             </Field>
-            <Field label="Unit price" error={errors.unitPrice} htmlFor="unitPrice">
+            <Field label="Unit price (PKR)" error={errors.unitPrice} htmlFor="unitPrice">
               <Input
                 id="unitPrice"
                 type="number"

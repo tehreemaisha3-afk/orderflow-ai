@@ -12,7 +12,7 @@ function list(values: string[] | null | undefined): string {
 
 function money(context: AssistantContext, value: number | null | undefined): string {
   if (value === null || value === undefined) return "";
-  return `${context.business.currency ?? ""} ${value}`.trim();
+  return `${context.business.currency ?? "PKR"} ${value}`.trim();
 }
 
 /** Business profile block. */
