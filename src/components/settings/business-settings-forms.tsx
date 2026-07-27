@@ -191,7 +191,7 @@ export function DeliverySettings() {
       <Field label="Delivery methods" hint="Comma separated, e.g. Courier, Self pickup">
         <Input value={csv(form.delivery_methods)} onChange={(e) => setForm({ ...form, delivery_methods: parseCsv(e.target.value) })} />
       </Field>
-      <Field label="Delivery charge">
+      <Field label="Delivery charge (PKR)">
         <Input type="number" min="0" step="0.01" value={form.delivery_charge} onChange={(e) => setForm({ ...form, delivery_charge: Number(e.target.value) })} />
       </Field>
       <Field label="Free delivery above">

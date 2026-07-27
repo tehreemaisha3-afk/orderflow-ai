@@ -239,7 +239,7 @@ function OrderDetails() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Total</Label>
+                  <Label>Total (PKR)</Label>
                   <Input type="number" step="0.01" value={form.total ?? 0} onChange={(e) => setForm({ ...form, total: e.target.value })} />
                 </div>
               </CardContent>
