@@ -55,7 +55,7 @@ export function isValidTwilioSignature(args: {
 
 /**
  * Optional outbound send through the Twilio REST API. The webhook replies with
- * TwiML by default; this is used for proactive/長 messages when credentials exist.
+ * TwiML by default; this is used for proactive messages when credentials exist.
  */
 export async function sendWhatsAppMessage(args: {
   to: string;
