@@ -50,7 +50,12 @@ export interface AssistantAnalysis {
   next_action: string;
   escalation_required: boolean;
   escalation_reason?: string | null;
+  /** True only when the customer has explicitly confirmed the final order. */
+  order_confirmed: boolean;
+  /** Payment method the customer chose, when stated. */
+  payment_method?: string | null;
 }
+
 
 export interface AssistantTurn {
   /** Message the customer should see. */
