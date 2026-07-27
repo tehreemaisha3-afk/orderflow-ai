@@ -36,8 +36,10 @@ export async function createOrderFromAnalysis(args: {
   analysis: AssistantAnalysis;
   conversationId: string;
   channel: string;
+  /** Service-role callers (webhooks) have no auth.uid(), so reserve stock via the admin path. */
+  serviceRole?: boolean;
 }): Promise<CreatedOrderSummary | null> {
-  const { supabase, context, analysis, conversationId, channel } = args;
+  const { supabase, context, analysis, conversationId, channel, serviceRole = false } = args;
   const businessId = context.business.id;
 
   // 1. Duplicate protection — one order per conversation confirmation.
