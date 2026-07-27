@@ -19,13 +19,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-import { formatCurrency } from "@/lib/currency";
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatCurrency } from "@/lib/currency";
 
 const schema = z.object({
   customerName: z.string().trim().min(1, "Customer name is required").max(100),
