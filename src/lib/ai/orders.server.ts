@@ -175,11 +175,25 @@ export async function createOrderFromAnalysis(args: {
     .insert(items.map((i) => ({ ...i, order_id: order.id })));
   if (itemsError) throw new Error(itemsError.message);
 
-  // 5. Reserve inventory (idempotent, ownership-checked in the database).
-  const { error: reserveError } = await supabase.rpc("reserve_order_inventory", {
-    _order_id: order.id,
-  });
-  if (reserveError) throw new Error(reserveError.message);
+  // 5. Reserve inventory (idempotent).
+  if (serviceRole) {
+    // No auth.uid() in webhook context — apply stock directly and flag the order.
+    const { error: applyError } = await supabase.rpc("apply_order_inventory", {
+      _order_id: order.id,
+      _direction: 1,
+    });
+    if (applyError) throw new Error(applyError.message);
+    const { error: flagError } = await supabase
+      .from("orders")
+      .update({ inventory_reserved: true })
+      .eq("id", order.id);
+    if (flagError) throw new Error(flagError.message);
+  } else {
+    const { error: reserveError } = await supabase.rpc("reserve_order_inventory", {
+      _order_id: order.id,
+    });
+    if (reserveError) throw new Error(reserveError.message);
+  }
 
   // 6. Link the conversation to the customer for future context.
   await supabase
