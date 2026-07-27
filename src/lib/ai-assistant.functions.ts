@@ -3,7 +3,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type {
   AssistantAnalysis,
-  AssistantHistoryMessage,
   CreatedOrderSummary,
 } from "@/lib/ai/types";
 
