@@ -137,10 +137,13 @@ const OUTPUT_CONTRACT = `Respond with a single JSON object and nothing else (no 
     "missing_fields": [],
     "next_action": "short description of what should happen next",
     "escalation_required": false,
-    "escalation_reason": null
+    "escalation_reason": null,
+    "payment_method": null,
+    "order_confirmed": false
   }
 }
-Only include customer details that the customer actually provided in this conversation.`;
+Only include customer details that the customer actually provided in this conversation.
+Set "order_confirmed" to true ONLY when the customer has explicitly confirmed a final order in their latest message (for example "yes, confirm", "place the order", "go ahead") AND the products with quantities are known. Never set it true for enquiries, greetings or while still collecting details. When it is true, repeat the full confirmed product list with quantities and unit prices, and include every customer detail you have (name, phone, city, address) plus "payment_method".`;
 
 /** Builds the system prompt from live business data — nothing about the domain is hardcoded. */
 export function buildSystemPrompt(context: AssistantContext): string {

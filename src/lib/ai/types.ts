@@ -78,4 +78,6 @@ export const EMPTY_ANALYSIS: AssistantAnalysis = {
   next_action: "none",
   escalation_required: false,
   escalation_reason: null,
+  order_confirmed: false,
+  payment_method: null,
 };
