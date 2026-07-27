@@ -22,6 +22,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { Package, Pencil, Plus, Trash2 } from "lucide-react";
+import { formatCurrency } from "@/lib/currency";
 
 export const Route = createFileRoute("/_authenticated/products")({
   head: () => ({
@@ -262,7 +263,7 @@ function ProductsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        {p.price} <span className="text-xs text-muted-foreground">/ {p.unit}</span>
+                        {formatCurrency(p.price)} <span className="text-xs text-muted-foreground">/ {p.unit}</span>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell">{p.stock}</TableCell>
                       <TableCell>
@@ -338,7 +339,7 @@ function ProductsPage() {
             <Field label="SKU (optional)">
               <Input value={form.sku ?? ""} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
             </Field>
-            <Field label="Price">
+            <Field label="Price (PKR)">
               <Input type="number" min="0" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} required />
             </Field>
             <Field label="Stock">

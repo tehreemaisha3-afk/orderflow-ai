@@ -26,6 +26,7 @@ import { NewOrderDialog } from "@/components/new-order-dialog";
 
 import { format } from "date-fns";
 import { Eye, Search } from "lucide-react";
+import { formatCurrency } from "@/lib/currency";
 
 export const Route = createFileRoute("/_authenticated/orders/")({
   head: () => ({ meta: [{ title: "Orders — OrderFlow AI" }] }),
@@ -144,7 +145,7 @@ function OrdersPage() {
                   <TableCell className="text-muted-foreground">{o.customers?.phone ?? "—"}</TableCell>
                   <TableCell><StatusBadge status={o.status} /></TableCell>
                   <TableCell><PaymentBadge status={o.payment_status} /></TableCell>
-                  <TableCell className="text-right">${Number(o.total).toFixed(2)}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(o.total)}</TableCell>
                   <TableCell className="text-muted-foreground text-sm">
                     {format(new Date(o.created_at), "MMM d, yyyy")}
                   </TableCell>

@@ -19,6 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+import { formatCurrency } from "@/lib/currency";
   Select,
   SelectContent,
   SelectItem,
@@ -297,7 +298,7 @@ export function NewOrderDialog() {
           </Field>
 
           <div className="rounded-lg bg-muted px-4 py-3 text-sm">
-            Order total <span className="font-semibold">${total.toFixed(2)}</span>
+            Order total <span className="font-semibold">{formatCurrency(total)}</span>
           </div>
 
           <DialogFooter className="gap-2">
