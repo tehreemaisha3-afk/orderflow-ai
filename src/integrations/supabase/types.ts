@@ -335,6 +335,7 @@ export type Database = {
           created_at: string
           id: string
           order_id: string
+          product_id: string | null
           product_name: string
           quantity: number
           unit_price: number
@@ -343,6 +344,7 @@ export type Database = {
           created_at?: string
           id?: string
           order_id: string
+          product_id?: string | null
           product_name: string
           quantity?: number
           unit_price?: number
@@ -351,6 +353,7 @@ export type Database = {
           created_at?: string
           id?: string
           order_id?: string
+          product_id?: string | null
           product_name?: string
           quantity?: number
           unit_price?: number
@@ -363,55 +366,78 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
         ]
       }
       orders: {
         Row: {
+          ai_conversation_id: string | null
           business_id: string
           created_at: string
           customer_id: string | null
           customer_notes: string | null
           delivery_address: string | null
           id: string
+          inventory_reserved: boolean
           missing_information: string | null
           order_number: string
           payment_method: string | null
           payment_status: Database["public"]["Enums"]["payment_status"]
+          source: string
           status: Database["public"]["Enums"]["order_status"]
           total: number
           updated_at: string
         }
         Insert: {
+          ai_conversation_id?: string | null
           business_id: string
           created_at?: string
           customer_id?: string | null
           customer_notes?: string | null
           delivery_address?: string | null
           id?: string
+          inventory_reserved?: boolean
           missing_information?: string | null
           order_number: string
           payment_method?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          source?: string
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
         }
         Update: {
+          ai_conversation_id?: string | null
           business_id?: string
           created_at?: string
           customer_id?: string | null
           customer_notes?: string | null
           delivery_address?: string | null
           id?: string
+          inventory_reserved?: boolean
           missing_information?: string | null
           order_number?: string
           payment_method?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          source?: string
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "orders_ai_conversation_id_fkey"
+            columns: ["ai_conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "orders_business_id_fkey"
             columns: ["business_id"]
@@ -580,6 +606,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_order_inventory: {
+        Args: { _direction: number; _order_id: string }
+        Returns: undefined
+      }
+      reserve_order_inventory: {
+        Args: { _order_id: string }
+        Returns: undefined
+      }
       user_owns_business: { Args: { _business_id: string }; Returns: boolean }
     }
     Enums: {
