@@ -105,6 +105,30 @@ export const sendAssistantMessage = createServerFn({ method: "POST" })
         .eq("business_id", business.id);
     }
 
+    // Real business actions on confirmation: customer upsert, order, items, stock reservation.
+    let order: CreatedOrderSummary | null = null;
+    if (turn.analysis.order_confirmed) {
+      const { createOrderFromAnalysis } = await import("@/lib/ai/orders.server");
+      try {
+        order = await createOrderFromAnalysis({
+          supabase,
+          context: assistantContext,
+          analysis: turn.analysis,
+          conversationId,
+          channel: data.channel,
+        });
+      } catch (error) {
+        await supabase.from("ai_processing_logs").insert({
+          business_id: business.id,
+          event_type: "order_creation_failed",
+          payload: JSON.parse(JSON.stringify({
+            conversation_id: conversationId,
+            message: error instanceof Error ? error.message : String(error),
+          })),
+        });
+      }
+    }
+
     await supabase.from("ai_processing_logs").insert({
       business_id: business.id,
       event_type: "assistant_turn",
@@ -114,9 +138,13 @@ export const sendAssistantMessage = createServerFn({ method: "POST" })
         intent: turn.analysis.intent,
         confidence: turn.analysis.confidence,
         escalation_required: turn.analysis.escalation_required,
+        order_confirmed: turn.analysis.order_confirmed,
+        order_id: order?.orderId ?? null,
+        order_number: order?.orderNumber ?? null,
+        duplicate_order: order?.duplicate ?? false,
       })),
     });
 
-
-    return { conversationId, reply: turn.reply, analysis: turn.analysis };
+    return { conversationId, reply: turn.reply, analysis: turn.analysis, order };
   });
+
