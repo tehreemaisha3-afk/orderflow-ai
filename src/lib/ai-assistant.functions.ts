@@ -1,7 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import type { AssistantAnalysis, AssistantHistoryMessage } from "@/lib/ai/types";
+import type {
+  AssistantAnalysis,
+  AssistantHistoryMessage,
+  CreatedOrderSummary,
+} from "@/lib/ai/types";
 
 const SendMessageInput = z.object({
   conversationId: z.string().uuid().nullable().optional(),
@@ -13,6 +17,7 @@ export interface SendAssistantMessageResult {
   conversationId: string;
   reply: string;
   analysis: AssistantAnalysis;
+  order: CreatedOrderSummary | null;
 }
 
 /**

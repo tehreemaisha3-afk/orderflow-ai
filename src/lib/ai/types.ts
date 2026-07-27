@@ -81,3 +81,12 @@ export const EMPTY_ANALYSIS: AssistantAnalysis = {
   order_confirmed: false,
   payment_method: null,
 };
+
+/** Result of turning a confirmed conversation into real records. */
+export interface CreatedOrderSummary {
+  orderId: string;
+  orderNumber: string;
+  total: number;
+  customerId: string;
+  duplicate: boolean;
+}

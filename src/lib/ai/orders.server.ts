@@ -1,17 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import type { AssistantContext } from "./context.server";
-import type { AssistantAnalysis } from "./types";
+import type { AssistantAnalysis, CreatedOrderSummary } from "./types";
 
 type Client = SupabaseClient<Database>;
 
-export interface CreatedOrderSummary {
-  orderId: string;
-  orderNumber: string;
-  total: number;
-  customerId: string;
-  duplicate: boolean;
-}
+export type { CreatedOrderSummary };
 
 function normalise(value: string): string {
   return value.trim().toLowerCase();
