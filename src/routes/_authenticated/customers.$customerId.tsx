@@ -8,6 +8,7 @@ import {
 import { StatusBadge, PaymentBadge } from "@/components/status-badges";
 import { format } from "date-fns";
 import { ArrowLeft } from "lucide-react";
+import { formatCurrency } from "@/lib/currency";
 
 export const Route = createFileRoute("/_authenticated/customers/$customerId")({
   head: () => ({ meta: [{ title: "Customer — OrderFlow AI" }] }),
@@ -71,7 +72,7 @@ function CustomerDetails() {
                   </TableCell>
                   <TableCell><StatusBadge status={o.status} /></TableCell>
                   <TableCell><PaymentBadge status={o.payment_status} /></TableCell>
-                  <TableCell className="text-right">${Number(o.total).toFixed(2)}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(o.total)}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {format(new Date(o.created_at), "MMM d, yyyy")}
                   </TableCell>

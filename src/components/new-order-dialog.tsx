@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatCurrency } from "@/lib/currency";
 
 const schema = z.object({
   customerName: z.string().trim().min(1, "Customer name is required").max(100),
@@ -241,7 +242,7 @@ export function NewOrderDialog() {
                 onChange={(e) => set("quantity", e.target.value as any)}
               />
             </Field>
-            <Field label="Unit price" error={errors.unitPrice} htmlFor="unitPrice">
+            <Field label="Unit price (PKR)" error={errors.unitPrice} htmlFor="unitPrice">
               <Input
                 id="unitPrice"
                 type="number"
@@ -297,7 +298,7 @@ export function NewOrderDialog() {
           </Field>
 
           <div className="rounded-lg bg-muted px-4 py-3 text-sm">
-            Order total <span className="font-semibold">${total.toFixed(2)}</span>
+            Order total <span className="font-semibold">{formatCurrency(total)}</span>
           </div>
 
           <DialogFooter className="gap-2">

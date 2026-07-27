@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { formatCurrency } from "@/lib/currency";
 
 export const Route = createFileRoute("/_authenticated/orders/$orderId")({
   head: () => ({ meta: [{ title: "Order — OrderFlow AI" }] }),
@@ -150,9 +151,9 @@ function OrderDetails() {
                     <div key={i.id} className="flex items-center justify-between py-3 text-sm">
                       <div>
                         <div className="font-medium">{i.product_name}</div>
-                        <div className="text-xs text-muted-foreground">Qty {i.quantity} × ${Number(i.unit_price).toFixed(2)}</div>
+                        <div className="text-xs text-muted-foreground">Qty {i.quantity} × {formatCurrency(i.unit_price)}</div>
                       </div>
-                      <div className="font-medium">${(i.quantity * Number(i.unit_price)).toFixed(2)}</div>
+                      <div className="font-medium">{formatCurrency(i.quantity * Number(i.unit_price))}</div>
                     </div>
                   ))}
                 </div>
@@ -238,7 +239,7 @@ function OrderDetails() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Total</Label>
+                  <Label>Total (PKR)</Label>
                   <Input type="number" step="0.01" value={form.total ?? 0} onChange={(e) => setForm({ ...form, total: e.target.value })} />
                 </div>
               </CardContent>

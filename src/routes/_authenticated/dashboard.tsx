@@ -24,6 +24,7 @@ import {
 import { StatusBadge, PaymentBadge } from "@/components/status-badges";
 import { format } from "date-fns";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
+import { formatCurrency } from "@/lib/currency";
 
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -134,7 +135,7 @@ function Dashboard() {
                     <TableCell>
                       <PaymentBadge status={o.payment_status} />
                     </TableCell>
-                    <TableCell className="text-right">${Number(o.total).toFixed(2)}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(o.total)}</TableCell>
                   </TableRow>
                 ))}
                 {orders.length === 0 && (
