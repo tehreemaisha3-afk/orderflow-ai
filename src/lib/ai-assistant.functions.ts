@@ -39,117 +39,13 @@ export const sendAssistantMessage = createServerFn({ method: "POST" })
     if (businessError) throw new Error(businessError.message);
     if (!business) throw new Error("Please complete your business setup before using the assistant.");
 
-    const { loadAssistantContext, runAssistantTurn } = await import("@/lib/ai/engine.server");
-    const assistantContext = await loadAssistantContext(supabase, business.id);
-
-    // Resolve or create the conversation.
-    let conversationId = data.conversationId ?? null;
-    if (conversationId) {
-      const { data: existing, error } = await supabase
-        .from("ai_conversations")
-        .select("id")
-        .eq("id", conversationId)
-        .eq("business_id", business.id)
-        .maybeSingle();
-      if (error) throw new Error(error.message);
-      if (!existing) conversationId = null;
-    }
-    if (!conversationId) {
-      const { data: created, error } = await supabase
-        .from("ai_conversations")
-        .insert({
-          business_id: business.id,
-          channel: data.channel,
-          title: data.message.slice(0, 60),
-        })
-        .select("id")
-        .single();
-      if (error) throw new Error(error.message);
-      conversationId = created.id;
-    }
-
-    // Conversation memory.
-    const { data: historyRows, error: historyError } = await supabase
-      .from("ai_conversation_messages")
-      .select("role, content")
-      .eq("conversation_id", conversationId)
-      .order("created_at", { ascending: true })
-      .limit(40);
-    if (historyError) throw new Error(historyError.message);
-
-    const history = (historyRows ?? []) as AssistantHistoryMessage[];
-
-    const turn = await runAssistantTurn({
-      context: assistantContext,
-      history,
+    const { processAssistantTurn } = await import("@/lib/ai/conversation.server");
+    return processAssistantTurn({
+      supabase,
+      businessId: business.id,
+      conversationId: data.conversationId ?? null,
       message: data.message,
+      channel: data.channel,
     });
-
-    const { error: insertError } = await supabase.from("ai_conversation_messages").insert([
-      {
-        conversation_id: conversationId,
-        business_id: business.id,
-        role: "customer",
-        content: data.message,
-      },
-      {
-        conversation_id: conversationId,
-        business_id: business.id,
-        role: "assistant",
-        content: turn.reply,
-        metadata: JSON.parse(JSON.stringify(turn.analysis)),
-      },
-    ]);
-    if (insertError) throw new Error(insertError.message);
-
-    if (turn.analysis.escalation_required) {
-      await supabase
-        .from("ai_conversations")
-        .update({ escalated: true })
-        .eq("id", conversationId)
-        .eq("business_id", business.id);
-    }
-
-    // Real business actions on confirmation: customer upsert, order, items, stock reservation.
-    let order: CreatedOrderSummary | null = null;
-    if (turn.analysis.order_confirmed) {
-      const { createOrderFromAnalysis } = await import("@/lib/ai/orders.server");
-      try {
-        order = await createOrderFromAnalysis({
-          supabase,
-          context: assistantContext,
-          analysis: turn.analysis,
-          conversationId,
-          channel: data.channel,
-        });
-      } catch (error) {
-        await supabase.from("ai_processing_logs").insert({
-          business_id: business.id,
-          event_type: "order_creation_failed",
-          payload: JSON.parse(JSON.stringify({
-            conversation_id: conversationId,
-            message: error instanceof Error ? error.message : String(error),
-          })),
-        });
-      }
-    }
-
-    await supabase.from("ai_processing_logs").insert({
-      business_id: business.id,
-      event_type: "assistant_turn",
-      payload: JSON.parse(JSON.stringify({
-        conversation_id: conversationId,
-        channel: data.channel,
-        intent: turn.analysis.intent,
-        confidence: turn.analysis.confidence,
-        escalation_required: turn.analysis.escalation_required,
-        order_confirmed: turn.analysis.order_confirmed,
-        order_id: order?.orderId ?? null,
-        order_number: order?.orderNumber ?? null,
-        duplicate_order: order?.duplicate ?? false,
-      })),
-    });
-
-    return { conversationId, reply: turn.reply, analysis: turn.analysis, order };
   });
 
