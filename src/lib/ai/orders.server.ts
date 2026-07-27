@@ -102,7 +102,7 @@ export async function createOrderFromAnalysis(args: {
   let customerId: string;
   if (existingCustomer) {
     customerId = existingCustomer.id;
-    const patch: Record<string, string> = {};
+    const patch: { name?: string; city?: string } = {};
     if (name && name !== "WhatsApp customer" && name !== existingCustomer.name) patch.name = name;
     if (city && city !== existingCustomer.city) patch.city = city;
     if (Object.keys(patch).length > 0) {
