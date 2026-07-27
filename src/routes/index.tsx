@@ -33,11 +33,11 @@ function Landing() {
             Built for WhatsApp-first businesses
           </div>
           <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
-            WhatsApp orders, finally organised.
+            Your AI business assistant for WhatsApp orders.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-            OrderFlow AI turns your WhatsApp Business chats into a clean dashboard of customers,
-            orders and follow-ups — so nothing slips through the cracks.
+            OrderFlow AI captures orders, tracks inventory, manages customers, and runs follow-ups
+            — directly from your WhatsApp chats. Less manual work, fewer missed sales.
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Link to="/auth" search={{ mode: "signup" }}>

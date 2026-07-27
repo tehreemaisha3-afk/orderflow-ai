@@ -163,11 +163,8 @@ function AssistantPage() {
               <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-primary">
                 <Bot className="h-5 w-5" />
               </div>
-              <h2 className="mt-4 text-sm font-semibold">Start a test conversation</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Your assistant answers using your business profile, product catalogue, delivery and
-                payment rules. Configure them in Settings and Products.
-              </p>
+              <h2 className="mt-4 text-sm font-semibold">Welcome to OrderFlow AI</h2>
+              <p className="mt-1 text-sm text-muted-foreground">How can I help you today?</p>
             </div>
           )}
 
