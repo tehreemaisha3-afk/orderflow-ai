@@ -77,43 +77,43 @@ The AI assistant is instructed to analyse incoming customer order messages, iden
 
 ### Home Page
 
-![Home Page](screenshots/home-page.png)
+<img width="1346" height="602" alt="home-page" src="https://github.com/user-attachments/assets/dafba54d-e078-4651-a8d6-60f2870f5708" />
 
 ---
 
 ### Dashboard
 
-![Dashboard](screenshots/dashboard.png)
+<img width="1349" height="589" alt="dashboard" src="https://github.com/user-attachments/assets/f0fbdf0c-34f5-44d9-bb4e-90f2497afc14" />
 
 ---
 
 ### AI Assistant – Conversation (Part 1)
 
-![AI Assistant Conversation Part 1](screenshots/ai-assistant-1.png)
+<img width="1347" height="689" alt="ai-assistant-1" src="https://github.com/user-attachments/assets/9e9f89cf-e6f4-4422-9806-945b9e8f9aa9" />
 
 ---
 
 ### AI Assistant – Conversation (Part 2)
 
-![AI Assistant Conversation Part 2](screenshots/ai-assistant-2.png)
+<img width="1343" height="685" alt="ai-assistant-2" src="https://github.com/user-attachments/assets/907550a7-19a6-4330-9004-a895f6c9842f" />
 
 ---
 
 ### Orders
 
-![Orders](screenshots/orders.png)
+<img width="1366" height="605" alt="orders" src="https://github.com/user-attachments/assets/7b74c86b-57d1-46ec-835d-ee266596f22e" />
 
 ---
 
 ### Customers
 
-![Customers](screenshots/customers.png)
+<img width="1366" height="609" alt="customers" src="https://github.com/user-attachments/assets/800a5e6e-d683-4a4c-83a6-c5d47a3e679b" />
 
 ---
 
 ### Products
 
-![Products](screenshots/products.png)
+<img width="1366" height="611" alt="products" src="https://github.com/user-attachments/assets/f75b8cda-8c12-47df-8cf2-8f9ef44ffb37" />
 
 ---
 
