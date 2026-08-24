@@ -81,6 +81,9 @@ function parseTurn(raw: string, fallbackReply: string): AssistantTurn {
     escalation_reason: rawAnalysis.escalation_reason ? String(rawAnalysis.escalation_reason) : null,
     order_confirmed: rawAnalysis.order_confirmed === true,
     payment_method: rawAnalysis.payment_method ? String(rawAnalysis.payment_method) : null,
+    detected_language: rawAnalysis.detected_language
+      ? String(rawAnalysis.detected_language).slice(0, 30)
+      : null,
   };
 
   const reply = typeof obj.reply === "string" && obj.reply.trim() ? obj.reply.trim() : fallbackReply;

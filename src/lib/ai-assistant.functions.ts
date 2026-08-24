@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type {
   AssistantAnalysis,
-  CreatedOrderSummary,
+  OrderDraftSummary,
 } from "@/lib/ai/types";
 
 const SendMessageInput = z.object({
@@ -16,7 +16,7 @@ export interface SendAssistantMessageResult {
   conversationId: string;
   reply: string;
   analysis: AssistantAnalysis;
-  order: CreatedOrderSummary | null;
+  draft: OrderDraftSummary | null;
 }
 
 /**

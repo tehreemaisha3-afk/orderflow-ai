@@ -330,6 +330,92 @@ export type Database = {
           },
         ]
       }
+      order_drafts: {
+        Row: {
+          business_id: string
+          channel: string
+          confidence: number
+          conversation_id: string | null
+          created_at: string
+          customer_id: string | null
+          detected_language: string | null
+          extraction: Json
+          id: string
+          issues: Json
+          order_id: string | null
+          reviewed_at: string | null
+          reviewer_note: string | null
+          source_message: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          channel?: string
+          confidence?: number
+          conversation_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          detected_language?: string | null
+          extraction?: Json
+          id?: string
+          issues?: Json
+          order_id?: string | null
+          reviewed_at?: string | null
+          reviewer_note?: string | null
+          source_message?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          channel?: string
+          confidence?: number
+          conversation_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          detected_language?: string | null
+          extraction?: Json
+          id?: string
+          issues?: Json
+          order_id?: string | null
+          reviewed_at?: string | null
+          reviewer_note?: string | null
+          source_message?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_drafts_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_drafts_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_drafts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_drafts_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string

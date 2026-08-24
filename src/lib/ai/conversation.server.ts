@@ -2,11 +2,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { loadAssistantContext } from "./context.server";
 import { runAssistantTurn } from "./engine.server";
-import { createOrderFromAnalysis } from "./orders.server";
+import { createDraftFromAnalysis } from "./drafts.server";
 import type {
   AssistantAnalysis,
   AssistantHistoryMessage,
-  CreatedOrderSummary,
+  OrderDraftSummary,
 } from "./types";
 
 type Client = SupabaseClient<Database>;
@@ -31,7 +31,8 @@ export interface ProcessTurnResult {
   conversationId: string;
   reply: string;
   analysis: AssistantAnalysis;
-  order: CreatedOrderSummary | null;
+  /** Pending draft awaiting owner approval, when the customer confirmed an order. */
+  draft: OrderDraftSummary | null;
 }
 
 /**
@@ -123,22 +124,25 @@ export async function processAssistantTurn({
       .eq("business_id", businessId);
   }
 
-  let order: CreatedOrderSummary | null = null;
+  // The AI never writes orders or inventory directly. A confirmed conversation
+  // becomes a draft that the business owner reviews and approves.
+  let draft: OrderDraftSummary | null = null;
   if (analysis.order_confirmed) {
     try {
-      order = await createOrderFromAnalysis({
+      draft = await createDraftFromAnalysis({
         supabase,
         context: assistantContext,
         analysis,
         conversationId,
         channel,
-        serviceRole,
+        sourceMessage: message,
+        customerId: knownCustomer?.id ?? null,
       });
     } catch (error) {
-      console.error("[assistant] order creation failed", error);
+      console.error("[assistant] draft creation failed", error);
       await supabase.from("ai_processing_logs").insert({
         business_id: businessId,
-        event_type: "order_creation_failed",
+        event_type: "draft_creation_failed",
         payload: JSON.parse(
           JSON.stringify({
             conversation_id: conversationId,
@@ -159,14 +163,15 @@ export async function processAssistantTurn({
         channel,
         intent: analysis.intent,
         confidence: analysis.confidence,
+        detected_language: analysis.detected_language ?? null,
         escalation_required: analysis.escalation_required,
         order_confirmed: analysis.order_confirmed,
-        order_id: order?.orderId ?? null,
-        order_number: order?.orderNumber ?? null,
-        duplicate_order: order?.duplicate ?? false,
+        draft_id: draft?.draftId ?? null,
+        draft_confidence: draft?.confidence ?? null,
+        draft_issues: draft?.issues.length ?? 0,
       }),
     ),
   });
 
-  return { conversationId, reply: turn.reply, analysis, order };
+  return { conversationId, reply: turn.reply, analysis, draft };
 }
