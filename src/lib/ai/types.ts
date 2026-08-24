@@ -54,6 +54,49 @@ export interface AssistantAnalysis {
   order_confirmed: boolean;
   /** Payment method the customer chose, when stated. */
   payment_method?: string | null;
+  /** Language the customer wrote in, e.g. "english", "urdu", "roman_urdu", "mixed". */
+  detected_language?: string | null;
+}
+
+export type DraftIssueSeverity = "blocking" | "warning";
+
+export interface DraftIssue {
+  code:
+    | "unknown_product"
+    | "price_mismatch"
+    | "insufficient_stock"
+    | "missing_customer_field"
+    | "no_items";
+  severity: DraftIssueSeverity;
+  message: string;
+  field?: string;
+}
+
+export interface ValidatedLineItem {
+  mentioned_as: string;
+  product_id: string | null;
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  catalogue_price: number | null;
+  stock_available: number | null;
+}
+
+export interface ValidationResult {
+  items: ValidatedLineItem[];
+  issues: DraftIssue[];
+  confidence: number;
+  total: number;
+  blocking: boolean;
+}
+
+export interface OrderDraftSummary {
+  draftId: string;
+  status: "pending";
+  confidence: number;
+  total: number;
+  issues: DraftIssue[];
+  duplicate: boolean;
 }
 
 
@@ -80,6 +123,7 @@ export const EMPTY_ANALYSIS: AssistantAnalysis = {
   escalation_reason: null,
   order_confirmed: false,
   payment_method: null,
+  detected_language: null,
 };
 
 /** Result of turning a confirmed conversation into real records. */
