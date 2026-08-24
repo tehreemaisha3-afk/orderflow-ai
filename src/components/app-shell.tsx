@@ -23,6 +23,7 @@ import {
   Package,
   Settings,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,6 +34,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 const nav = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Orders", url: "/orders", icon: ShoppingBag },
+  { title: "Approvals", url: "/approvals", icon: ShieldCheck },
   { title: "Customers", url: "/customers", icon: Users },
   { title: "Messages", url: "/messages", icon: MessageCircle },
   { title: "Assistant", url: "/assistant", icon: Bot },
