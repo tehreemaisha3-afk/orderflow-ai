@@ -131,13 +131,12 @@ export async function handleIncomingWhatsAppMessage(
   await supabase.from("whatsapp_messages").insert({
     business_id: business.id,
     customer_id: customer.id,
-    order_id: result.order?.orderId ?? null,
     direction: "outbound",
     body: result.reply,
   });
 
   console.log(
-    `[whatsapp] business=${business.id} sid=${message.messageSid ?? "-"} intent=${result.analysis.intent} order=${result.order?.orderNumber ?? "none"}`,
+    `[whatsapp] business=${business.id} sid=${message.messageSid ?? "-"} intent=${result.analysis.intent} draft=${result.draft?.draftId ?? "none"}`,
   );
 
   return result.reply;

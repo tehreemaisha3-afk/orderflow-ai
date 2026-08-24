@@ -2,11 +2,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { loadAssistantContext } from "./context.server";
 import { runAssistantTurn } from "./engine.server";
-import { createOrderFromAnalysis } from "./orders.server";
+import { createDraftFromAnalysis } from "./drafts.server";
 import type {
   AssistantAnalysis,
   AssistantHistoryMessage,
-  CreatedOrderSummary,
+  OrderDraftSummary,
 } from "./types";
 
 type Client = SupabaseClient<Database>;
@@ -31,7 +31,8 @@ export interface ProcessTurnResult {
   conversationId: string;
   reply: string;
   analysis: AssistantAnalysis;
-  order: CreatedOrderSummary | null;
+  /** Pending draft awaiting owner approval, when the customer confirmed an order. */
+  draft: OrderDraftSummary | null;
 }
 
 /**
@@ -172,5 +173,5 @@ export async function processAssistantTurn({
     ),
   });
 
-  return { conversationId, reply: turn.reply, analysis, order };
+  return { conversationId, reply: turn.reply, analysis, draft };
 }
