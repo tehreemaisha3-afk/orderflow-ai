@@ -97,6 +97,15 @@ function AssistantPage() {
         qc.invalidateQueries({ queryKey: ["ai-conversations"] }),
       ]);
       inputRef.current?.focus();
+      if (result.draft && !result.draft.duplicate) {
+        toast.success("Order draft created — awaiting your approval", {
+          description: `${Math.round(result.draft.confidence * 100)}% confidence${result.draft.issues.length ? ` · ${result.draft.issues.length} issue(s) to review` : ""}`,
+          action: {
+            label: "Review",
+            onClick: () => navigate({ to: "/approvals" }),
+          },
+        });
+      }
     },
     onError: (error: unknown) => {
       setPending([]);
