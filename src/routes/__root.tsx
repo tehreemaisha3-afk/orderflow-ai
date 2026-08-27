@@ -45,6 +45,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
+    // A stale asset reference after a redeploy: reload to pick up the new build.
+    if (isChunkLoadError(error) && reloadForNewBuild()) return;
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
