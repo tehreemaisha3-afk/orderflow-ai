@@ -101,10 +101,13 @@ export function validateExtraction(
     const quantity = Math.max(1, Math.round(Number(p.quantity ?? 1) || 1));
 
     if (!product) {
+      const suggestion = suggestCatalogueProduct(context, mentioned);
       issues.push({
         code: "unknown_product",
         severity: "blocking",
-        message: `"${mentioned}" does not match any product in your catalogue.`,
+        message: suggestion
+          ? `"${mentioned}" is not in your catalogue. Closest match: ${suggestion.name}. Confirm it while editing this draft.`
+          : `"${mentioned}" does not match any product in your catalogue. Select a product manually.`,
         field: mentioned,
       });
       items.push({
@@ -115,9 +118,11 @@ export function validateExtraction(
         unit_price: Number(p.unit_price ?? 0) || 0,
         catalogue_price: null,
         stock_available: null,
+        suggestion,
       });
       continue;
     }
+
 
     const cataloguePrice = Number(product.price);
     const extractedPrice = Number(p.unit_price ?? cataloguePrice);
