@@ -72,6 +72,16 @@ export interface DraftIssue {
   field?: string;
 }
 
+/** Reliable closest-match suggestion for a product the AI could not resolve. */
+export interface ProductSuggestion {
+  product_id: string;
+  name: string;
+  price: number;
+  stock: number;
+  /** 0-1 string similarity; only reliable suggestions are surfaced. */
+  score: number;
+}
+
 export interface ValidatedLineItem {
   mentioned_as: string;
   product_id: string | null;
@@ -80,12 +90,20 @@ export interface ValidatedLineItem {
   unit_price: number;
   catalogue_price: number | null;
   stock_available: number | null;
+  suggestion?: ProductSuggestion | null;
 }
+
+/**
+ * Human-meaningful verification state. We deliberately do not surface a
+ * fabricated numeric score — the state is derived from real validation checks.
+ */
+export type VerificationState = "verified" | "needs_review" | "needs_clarification";
 
 export interface ValidationResult {
   items: ValidatedLineItem[];
   issues: DraftIssue[];
   confidence: number;
+  state: VerificationState;
   total: number;
   blocking: boolean;
 }
@@ -94,10 +112,12 @@ export interface OrderDraftSummary {
   draftId: string;
   status: "pending";
   confidence: number;
+  state: VerificationState;
   total: number;
   issues: DraftIssue[];
   duplicate: boolean;
 }
+
 
 
 export interface AssistantTurn {

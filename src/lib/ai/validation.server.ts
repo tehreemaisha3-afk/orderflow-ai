@@ -1,5 +1,12 @@
 import type { AssistantContext } from "./context.server";
-import type { AssistantAnalysis, DraftIssue, ValidatedLineItem, ValidationResult } from "./types";
+import type {
+  AssistantAnalysis,
+  DraftIssue,
+  ProductSuggestion,
+  ValidatedLineItem,
+  ValidationResult,
+  VerificationState,
+} from "./types";
 
 function normalise(value: string): string {
   return value.trim().toLowerCase();
@@ -23,11 +30,55 @@ export function matchCatalogueProduct(
   );
 }
 
+function bigrams(value: string): string[] {
+  const s = normalise(value).replace(/\s+/g, " ");
+  const out: string[] = [];
+  for (let i = 0; i < s.length - 1; i += 1) out.push(s.slice(i, i + 2));
+  return out;
+}
+
+/** Dice coefficient — cheap, dependency-free string similarity. */
+function similarity(a: string, b: string): number {
+  const A = bigrams(a);
+  const B = bigrams(b);
+  if (A.length === 0 || B.length === 0) return 0;
+  const pool = [...B];
+  let hits = 0;
+  for (const g of A) {
+    const idx = pool.indexOf(g);
+    if (idx >= 0) {
+      hits += 1;
+      pool.splice(idx, 1);
+    }
+  }
+  return (2 * hits) / (A.length + B.length);
+}
+
+/** Only suggest a catalogue product when the match is confident enough to be useful. */
+const SUGGESTION_THRESHOLD = 0.55;
+
+export function suggestCatalogueProduct(
+  context: AssistantContext,
+  mentioned: string,
+): ProductSuggestion | null {
+  let best: ProductSuggestion | null = null;
+  for (const p of context.products) {
+    const candidates = [p.name, ...(p.aliases ?? []), p.sku ?? ""];
+    const score = Math.max(...candidates.map((c) => (c ? similarity(mentioned, c) : 0)));
+    if (!best || score > best.score) {
+      best = { product_id: p.id, name: p.name, price: Number(p.price), stock: p.stock, score };
+    }
+  }
+  if (!best || best.score < SUGGESTION_THRESHOLD) return null;
+  return { ...best, score: Number(best.score.toFixed(2)) };
+}
+
 const REQUIRED_CUSTOMER_FIELDS: Array<{ key: "phone" | "name" | "address"; label: string; blocking: boolean }> = [
   { key: "phone", label: "phone number", blocking: true },
   { key: "name", label: "customer name", blocking: false },
   { key: "address", label: "delivery address", blocking: false },
 ];
+
 
 /**
  * Verifies an AI extraction against the business's real catalogue before any
@@ -50,10 +101,13 @@ export function validateExtraction(
     const quantity = Math.max(1, Math.round(Number(p.quantity ?? 1) || 1));
 
     if (!product) {
+      const suggestion = suggestCatalogueProduct(context, mentioned);
       issues.push({
         code: "unknown_product",
         severity: "blocking",
-        message: `"${mentioned}" does not match any product in your catalogue.`,
+        message: suggestion
+          ? `"${mentioned}" is not in your catalogue. Closest match: ${suggestion.name}. Confirm it while editing this draft.`
+          : `"${mentioned}" does not match any product in your catalogue. Select a product manually.`,
         field: mentioned,
       });
       items.push({
@@ -64,9 +118,11 @@ export function validateExtraction(
         unit_price: Number(p.unit_price ?? 0) || 0,
         catalogue_price: null,
         stock_available: null,
+        suggestion,
       });
       continue;
     }
+
 
     const cataloguePrice = Number(product.price);
     const extractedPrice = Number(p.unit_price ?? cataloguePrice);
@@ -128,11 +184,25 @@ export function validateExtraction(
 
   const total = items.reduce((sum, i) => sum + i.quantity * i.unit_price, 0);
 
+  // Derived from real checks only — never a fabricated score.
+  const needsClarification = issues.some(
+    (i) =>
+      i.severity === "blocking" &&
+      (i.code === "unknown_product" || i.code === "no_items" || i.code === "missing_customer_field"),
+  );
+  const state: VerificationState = needsClarification
+    ? "needs_clarification"
+    : issues.length > 0
+      ? "needs_review"
+      : "verified";
+
   return {
     items,
     issues,
     confidence,
+    state,
     total,
     blocking: issues.some((i) => i.severity === "blocking"),
   };
 }
+
