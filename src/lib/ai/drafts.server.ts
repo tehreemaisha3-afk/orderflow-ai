@@ -43,7 +43,12 @@ export async function createDraftFromAnalysis(args: {
     const { error } = await supabase
       .from("order_drafts")
       .update({
-        extraction: toJson({ analysis, items: validation.items, total: validation.total }),
+        extraction: toJson({
+          analysis,
+          items: validation.items,
+          total: validation.total,
+          state: validation.state,
+        }),
         issues: toJson(validation.issues),
         confidence: validation.confidence,
         detected_language: analysis.detected_language ?? null,
@@ -56,6 +61,7 @@ export async function createDraftFromAnalysis(args: {
       draftId: existing.id,
       status: "pending",
       confidence: validation.confidence,
+      state: validation.state,
       total: validation.total,
       issues: validation.issues,
       duplicate: true,
@@ -73,7 +79,12 @@ export async function createDraftFromAnalysis(args: {
       detected_language: analysis.detected_language ?? null,
       confidence: validation.confidence,
       source_message: sourceMessage.slice(0, 2000),
-      extraction: toJson({ analysis, items: validation.items, total: validation.total }),
+      extraction: toJson({
+        analysis,
+        items: validation.items,
+        total: validation.total,
+        state: validation.state,
+      }),
       issues: toJson(validation.issues),
     })
     .select("id")
@@ -84,6 +95,7 @@ export async function createDraftFromAnalysis(args: {
     draftId: created.id,
     status: "pending",
     confidence: validation.confidence,
+    state: validation.state,
     total: validation.total,
     issues: validation.issues,
     duplicate: false,
