@@ -181,3 +181,117 @@ export async function rejectDraft(args: {
     payload: toJson({ draft_id: draftId }),
   });
 }
+
+export interface DraftEditPatch {
+  customer: {
+    name?: string | null;
+    phone?: string | null;
+    city?: string | null;
+    address?: string | null;
+  };
+  paymentMethod?: string | null;
+  notes?: string | null;
+  items: Array<{
+    product_id: string | null;
+    mentioned_as: string;
+    quantity: number;
+    unit_price?: number | null;
+  }>;
+}
+
+/**
+ * Owner edit of a pending draft. The edited values replace the AI extraction
+ * and are re-validated against the live catalogue, so approving afterwards
+ * uses exactly what the owner saw. Nothing is written to orders or inventory.
+ */
+export async function updateDraft(args: {
+  supabase: Client;
+  context: AssistantContext;
+  businessId: string;
+  draftId: string;
+  patch: DraftEditPatch;
+}): Promise<OrderDraftSummary> {
+  const { supabase, context, businessId, draftId, patch } = args;
+
+  const { data: draft, error } = await supabase
+    .from("order_drafts")
+    .select("id, status, extraction, channel")
+    .eq("id", draftId)
+    .eq("business_id", businessId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!draft) throw new Error("Draft not found.");
+  if (draft.status !== "pending") throw new Error("This draft has already been reviewed.");
+
+  const previous = (draft.extraction ?? {}) as { analysis?: AssistantAnalysis };
+  const base = previous.analysis;
+  if (!base) throw new Error("This draft has no usable extraction.");
+
+  const products = patch.items
+    .map((item) => {
+      const product = item.product_id
+        ? (context.products.find((p) => p.id === item.product_id) ?? null)
+        : null;
+      const name = product?.name ?? item.mentioned_as.trim();
+      if (!name) return null;
+      return {
+        mentioned_as: item.mentioned_as.trim() || name,
+        matched_product: name,
+        product_id: product?.id ?? null,
+        quantity: Math.max(1, Math.round(Number(item.quantity) || 1)),
+        unit_price:
+          item.unit_price != null && Number.isFinite(Number(item.unit_price))
+            ? Number(item.unit_price)
+            : (product ? Number(product.price) : null),
+      };
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+
+  const analysis: AssistantAnalysis = {
+    ...base,
+    products,
+    customer: {
+      name: patch.customer.name?.trim() || null,
+      phone: patch.customer.phone?.trim() || null,
+      city: patch.customer.city?.trim() || null,
+      address: patch.customer.address?.trim() || null,
+    },
+    payment_method: patch.paymentMethod?.trim() || null,
+    next_action: patch.notes?.trim() || base.next_action,
+  };
+
+  const validation = validateExtraction(context, analysis);
+
+  const { error: updateError } = await supabase
+    .from("order_drafts")
+    .update({
+      extraction: toJson({
+        analysis,
+        items: validation.items,
+        total: validation.total,
+        state: validation.state,
+        edited_by_owner: true,
+      }),
+      issues: toJson(validation.issues),
+      confidence: validation.confidence,
+    })
+    .eq("id", draftId)
+    .eq("business_id", businessId);
+  if (updateError) throw new Error(updateError.message);
+
+  await supabase.from("ai_processing_logs").insert({
+    business_id: businessId,
+    event_type: "draft_edited",
+    payload: toJson({ draft_id: draftId, state: validation.state, total: validation.total }),
+  });
+
+  return {
+    draftId,
+    status: "pending",
+    confidence: validation.confidence,
+    state: validation.state,
+    total: validation.total,
+    issues: validation.issues,
+    duplicate: false,
+  };
+}
