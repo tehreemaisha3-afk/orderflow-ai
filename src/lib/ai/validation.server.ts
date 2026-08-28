@@ -184,11 +184,25 @@ export function validateExtraction(
 
   const total = items.reduce((sum, i) => sum + i.quantity * i.unit_price, 0);
 
+  // Derived from real checks only — never a fabricated score.
+  const needsClarification = issues.some(
+    (i) =>
+      i.severity === "blocking" &&
+      (i.code === "unknown_product" || i.code === "no_items" || i.code === "missing_customer_field"),
+  );
+  const state: VerificationState = needsClarification
+    ? "needs_clarification"
+    : issues.length > 0
+      ? "needs_review"
+      : "verified";
+
   return {
     items,
     issues,
     confidence,
+    state,
     total,
     blocking: issues.some((i) => i.severity === "blocking"),
   };
 }
+
