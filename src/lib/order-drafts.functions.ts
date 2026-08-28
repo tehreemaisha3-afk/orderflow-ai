@@ -84,32 +84,20 @@ const ClarifyInput = z.object({
   message: z.string().trim().min(1).max(1000),
 });
 
-async function resolveBusinessId(
-  supabase: {
-    from: (t: "businesses") => {
-      select: (c: string) => {
-        eq: (
-          c: string,
-          v: string,
-        ) => { maybeSingle: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> };
-      };
-    };
-  },
-  userId: string,
-) {
-  const { data, error } = await supabase.from("businesses").select("id").eq("owner_id", userId).maybeSingle();
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Business profile not found.");
-  return data.id;
-}
-
 /** Owner edit of a pending draft — re-validated, nothing committed yet. */
 export const updateOrderDraft = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => EditInput.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const businessId = await resolveBusinessId(supabase as never, userId);
+    const { data: business, error: businessError } = await supabase
+      .from("businesses")
+      .select("id")
+      .eq("owner_id", userId)
+      .maybeSingle();
+    if (businessError) throw new Error(businessError.message);
+    if (!business) throw new Error("Business profile not found.");
+    const businessId = business.id;
 
     const { updateDraft } = await import("@/lib/ai/drafts.server");
     const { loadAssistantContext } = await import("@/lib/ai/context.server");
